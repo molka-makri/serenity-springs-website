@@ -46,15 +46,15 @@ cd serenity-springs-website
 ```
 
 ### 2. Move the Project to XAMPP's htdocs Directory
-Place the cloned folder into the htdocs directory of your XAMPP installation:
+  Place the cloned folder into the htdocs directory of your XAMPP installation:
 
-Windows
-C:\xampp\htdocs\serenity-springs-website
+  Windows
+  C:\xampp\htdocs\serenity-springs-website
 
-macOS/Linux
-/Applications/XAMPP/htdocs/serenity-springs-website
-ou
-/opt/lampp/htdocs/serenity-springs-website
+  macOS/Linux
+  /Applications/XAMPP/htdocs/serenity-springs-website
+  ou
+  /opt/lampp/htdocs/serenity-springs-website
 ### 3. Start Apache and MySQL
 Open the XAMPP Control Panel and start the Apache and MySQL services.
 ### 4. Create and Import the Database
