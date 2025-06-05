@@ -13,6 +13,18 @@ This platform bridges the gap between producers and consumers, offering features
         Utilize weather forecasting tools, access veterinary support, and connect with eco-conscious consumers to sell sustainable products efficiently.
       </p>
     </div>
+  <div style="flex: 1 1 250px; background: white; border-radius: 10px; padding: 1.5em; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+      <h3 style="color: #00796b;">🛒 Consumers</h3>
+      <p>
+        Discover healthy, environmentally friendly products, support local producers, and make responsible, sustainable purchasing decisions.
+      </p>
+    </div>
+ <div style="flex: 1 1 250px; background: white; border-radius: 10px; padding: 1.5em; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+      <h3 style="color: #5d4037;">🌱 Agricultural Community</h3>
+      <p>
+        Participate in educational events, share expertise, and help build a more sustainable and resilient agricultural future.
+      </p>
+    </div>
  </div>
 </section>
 </div>
