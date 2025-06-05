@@ -46,7 +46,7 @@ cd serenity-springs-website
 ```
 
 ### 2. Move the Project to XAMPP's htdocs Directory
-Placez le dossier cloné dans le répertoire htdocs de votre installation XAMPP :
+Place the cloned folder into the htdocs directory of your XAMPP installation:
 
 Windows
 C:\xampp\htdocs\serenity-springs-website
@@ -56,23 +56,31 @@ macOS/Linux
 ou
 /opt/lampp/htdocs/serenity-springs-website
 ### 3. Start Apache and MySQL
-Lancez le XAMPP Control Panel et démarrez les services Apache et MySQL.
+Open the XAMPP Control Panel and start the Apache and MySQL services.
 ### 4. Create and Import the Database
-Ouvrez votre navigateur et allez sur :
+1.Open your browser and go to:
 http://localhost/phpmyadmin
 
-Créez une nouvelle base de données nommée :
+2.Create a new database named:
 serenity_springs
 
-Sélectionnez cette base de données, puis allez dans l’onglet Importer.
+3.Select the newly created database, then go to the Import tab.
 
-Choisissez le fichier suivant depuis le projet :
+4.Choose the SQL file from the project folder:
 database/serenity_springs.sql
 
-Cliquez sur Go pour importer les tables et les données.
+5.Click Go to import the database structure and data.
+
+
 ### 5. Configure the Database Connection
-Ouvrez le fichier de configuration (par exemple config.php) et assurez-vous que les paramètres suivants sont corrects
-### 6. Access the Website
-Une fois tout configuré, accédez à l'application via votre navigateur :
+Open the configuration file (for example config.php) and make sure the following settings match your local setup:
 ```bash
-http://localhost/serenity-springs-website
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', '');
+define('DB_NAME', 'serenity_springs');
+````
+### 6. Access the Website
+Once everything is configured, open your browser and go to:
+```bash
+http://localhost/serenity-springs-website/view/index.html
