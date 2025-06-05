@@ -42,13 +42,13 @@ Participate in educational events, share expertise, and help build a more sustai
    ```bash
    git clone https://github.com/molka-makri/serenity-springs-website.git
 2. **Setup Local Environment**
-   ```bash
+```bash
 Install XAMPP or another web server stack.
 
-Place the project in your server root directory (htdocs in XAMPP).
+Place the project in your server root directory (htdocs in XAMPP)
 
 3. **Configure Database**
-    ```bash
+```bash
 Create a MySQL database (e.g., serenitysprings)
 
 Import the provided SQL file in /database/
