@@ -1,5 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serenity Springs Website</title>
+</head>
+<body>
 <div align="left">
-  <h2 style="text-align: center; color: #2e7d32;">🌿 Serenity Springs Website</h2><br/>
+  <h2 style="text-align: center; color: #2e7d32;">🌿 Serenity Springs Website</h2>
   <h2 style="text-align: center; color: #2e7d32;">🧭 Overview</h2>
   <p>
     Serenity Springs Website is a comprehensive web platform built to serve farmers, eco-conscious consumers, and the agriculture community.
@@ -35,39 +43,29 @@
   <section id="installation" style="padding: 2em; background-color: #e8f5e9; font-family: Arial, sans-serif;">
     <h2 style="text-align: center; color: #1b5e20;">🛠️ Installation & Configuration</h2>
     <ol style="max-width: 900px; margin: auto; font-size: 1em; line-height: 1.6;">
-      <li><strong>Clone the repository:</strong><br/>
+      <li><strong>Clone the repository:</strong><br>
         <code>git clone https://github.com/molka-makri/serenity-springs-website.git</code>
-      </li><br/>
-
-      <li><strong>Move the project to XAMPP's htdocs directory:</strong><br/>
-        - Windows: <code>C:\xampp\htdocs\serenity-springs-website</code><br/>
+        Move the project to XAMPP's htdocs directory:<br>
+        - Windows: <code>C:\xampp\htdocs\serenity-springs-website</code><br>
         - macOS/Linux: <code>/opt/lampp/htdocs/serenity-springs-website</code>
-      </li><br/>
-
-      <li><strong>Start Apache and MySQL:</strong><br/>
         Open the XAMPP Control Panel and click "Start" next to Apache and MySQL.
-      </li><br/>
-
-      <li><strong>Configure the database:</strong><br/>
-        - Go to <code>http://localhost/phpmyadmin</code><br/>
-        - Create a new database (e.g., <code>serenity</code>)<br/>
+           - Go to <code>http://localhost/phpmyadmin</code><br>
+        - Create a new database (e.g., <code>serenity</code>)<br>
         - Import the SQL file from the <code>database/</code> folder of the project.
-      </li><br/>
+      </li><br>
 
-      <li><strong>Edit your database connection (e.g., config.php):</strong><br/>
-        Example:
-        <pre style="background: #f0f0f0; padding: 1em; border-radius: 8px;">
+     
 define('DB_SERVER', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'serenity');
-        </pre>
-      </li><br/>
+        
+      
 
-      <li><strong>Access the website:</strong><br/>
-        Open your browser and navigate to:<br/>
-        <code>http://localhost/serenity-springs-website</code>
-      </li>
+      
+       
     </ol>
   </section>
 </div>
+</body>
+</html>
