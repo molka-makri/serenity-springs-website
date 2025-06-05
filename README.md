@@ -27,4 +27,5 @@ This platform bridges the gap between producers and consumers, offering features
     </div>
  </div>
 </section>
+<h2 style="text-align: center; color: #2e7d32;">🛠 Technologies Used</h2>
 </div>
