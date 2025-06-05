@@ -1,0 +1,349 @@
+<?php
+session_start();
+
+// Initialisation des commandes si elles n'existent pas dans la session
+if (!isset($_SESSION['commandes'])) {
+    $_SESSION['commandes'] = [
+        ['idCommande' => 1, 'type' => 'Légume', 'prix' => 20, 'dateCommande' => '2024-11-01', 'quantite' => 10],
+        ['idCommande' => 2, 'type' => 'Fruit', 'prix' => 15, 'dateCommande' => '2024-11-02', 'quantite' => 5],
+    ];
+}
+
+// Variables pour la gestion des actions
+$editCommande = null;
+$addCommande = isset($_GET['action']) && $_GET['action'] === 'add';
+$searchId = isset($_POST['searchId']) ? trim($_POST['searchId']) : '';
+$searchType = isset($_POST['searchType']) ? trim($_POST['searchType']) : '';
+$errors = [];
+
+// Traitement des actions POST (ajout, modification, suppression)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $type = trim($_POST['type']);
+    $prix = floatval($_POST['prix']);
+    $dateCommande = trim($_POST['dateCommande']);
+    $quantite = intval($_POST['quantite']);
+
+    // Contrôles de saisie
+    if (empty($type) || !in_array($type, ['Légume', 'Fruit'])) {
+        $errors[] = "Le type de commande doit être 'Fruit' ou 'Légume'.";
+    }
+    if ($prix <= 0) {
+        $errors[] = "Le prix doit être un nombre positif.";
+    }
+    if ($quantite <= 0) {
+        $errors[] = "La quantité doit être un entier positif.";
+    }
+    if (empty($dateCommande)) {
+        $errors[] = "La date de commande est obligatoire.";
+    }
+
+    // Si aucune erreur, traitement des actions
+    if (empty($errors)) {
+        if ($_POST['action'] === 'add') {
+            $newId = count($_SESSION['commandes']) + 1;
+            $_SESSION['commandes'][] = [
+                'idCommande' => $newId,
+                'type' => $type,
+                'prix' => $prix,
+                'dateCommande' => $dateCommande,
+                'quantite' => $quantite,
+            ];
+            header("Location: listCommandes.php");
+            exit;
+        } elseif ($_POST['action'] === 'update') {
+            foreach ($_SESSION['commandes'] as &$commande) {
+                if ($commande['idCommande'] == $_POST['idCommande']) {
+                    $commande['type'] = $type;
+                    $commande['prix'] = $prix;
+                    $commande['dateCommande'] = $dateCommande;
+                    $commande['quantite'] = $quantite;
+                    break;
+                }
+            }
+            header("Location: listCommandes.php");
+            exit;
+        }
+    }
+}
+
+// Si on accède à une commande pour modification
+if (isset($_GET['idCommande'])) {
+    foreach ($_SESSION['commandes'] as $commande) {
+        if ($commande['idCommande'] == $_GET['idCommande']) {
+            $editCommande = $commande;
+            break;
+        }
+    }
+}
+
+// Filtrer les commandes selon les critères de recherche
+$filteredCommandes = array_filter($_SESSION['commandes'], function ($commande) use ($searchId, $searchType) {
+    $matchesId = empty($searchId) || (int)$commande['idCommande'] == (int)$searchId;
+    $matchesType = empty($searchType) || strtolower($commande['type']) == strtolower($searchType);
+    return $matchesId && $matchesType;
+});
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des commandes</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
+
+
+
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <link rel="icon" href="assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
+
+    <!-- Fonts and icons -->
+    <script src="assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+      WebFont.load({
+        google: { families: ["Public Sans:300,400,500,600,700"] },
+        custom: {
+          families: ["Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"],
+          urls: ["assets/css/fonts.min.css"],
+        },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/plugins.min.css" />
+    <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
+    <link rel="stylesheet" href="assets/css/demo.css" />
+
+    <style>
+      .table {
+        width: 100%;
+        margin: 20px auto;
+        border-collapse: collapse;
+      }
+      .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+      .table th {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+      }
+      .actions a {
+        margin: 0 5px;
+        color: #007BFF;
+        text-decoration: none;
+      }
+      .actions a:hover {
+        text-decoration: underline;
+      }
+      .main-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        margin: 20px 0;
+      }
+      .btn-add {
+        display: block;
+        width: 200px;
+        margin: 0 auto 20px;
+        text-align: center;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+      }
+      .btn-add:hover {
+        background-color: #45a049;
+      }
+    </style>
+</head>
+<body>
+
+
+<div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar" data-background-color="green">
+        <div class="sidebar-logo">
+          <div class="logo-header" data-background-color="green">
+            <a href="index.html" class="logo">
+              <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20" />
+            </a>
+            <div class="nav-toggle">
+              <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>
+              <button class="btn btn-toggle sidenav-toggler"><i class="gg-menu-left"></i></button>
+            </div>
+            <button class="topbar-toggler more"><i class="gg-more-vertical-alt"></i></button>
+          </div>
+        </div>
+        <div class="sidebar-wrapper scrollbar scrollbar-inner">
+          <div class="sidebar-content">
+            <ul class="nav nav-secondary">
+              <li class="nav-item active">
+                <a href="dashboard.php">
+                  <i class="fas fa-home"></i>
+                  <p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-section">
+                <h4 class="text-section">commande</h4>
+              </li>
+              <li class="nav-item">
+                <a href="listCommandes.php">
+                  <i class="fas fa-layer-group"></i>
+                  <p>commande</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- End Sidebar -->
+
+      <!-- Navbar -->
+      <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
+        <div class="container-fluid">
+          <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+            <li class="nav-item topbar-user dropdown hidden-caret">
+              <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                <div class="avatar-sm">
+                  <img src="assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle" />
+                </div>
+                <span class="profile-username">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-user animated fadeIn">
+                <li><a class="dropdown-item" href="#">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- End Navbar -->
+
+
+
+
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">
+        <?= $editCommande ? 'Modifier la commande' : ($addCommande ? 'Ajouter une nouvelle commande' : 'Liste des commandes') ?>
+    </h1>
+
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($addCommande || $editCommande): ?>
+        <form method="POST" action="" class="form-command">
+            <input type="hidden" name="action" value="<?= $editCommande ? 'update' : 'add' ?>">
+            <?php if ($editCommande): ?>
+                <input type="hidden" name="idCommande" value="<?= htmlspecialchars($editCommande['idCommande']) ?>">
+            <?php endif; ?>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Type :</label>
+                <select id="type" name="type" class="form-select" required>
+                    <option value="">Choisir un type</option>
+                    <option value="Légume" <?= (isset($editCommande) && $editCommande['type'] === 'Légume') ? 'selected' : '' ?>>Légume</option>
+                    <option value="Fruit" <?= (isset($editCommande) && $editCommande['type'] === 'Fruit') ? 'selected' : '' ?>>Fruit</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="prix" class="form-label">Prix :</label>
+                <input type="number" id="prix" name="prix" class="form-control" min="0.01" step="0.01" value="<?= $editCommande['prix'] ?? '' ?>" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="dateCommande" class="form-label">Date de commande :</label>
+                <input type="date" id="dateCommande" name="dateCommande" class="form-control" value="<?= $editCommande['dateCommande'] ?? '' ?>" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="quantite" class="form-label">Quantité :</label>
+                <input type="number" id="quantite" name="quantite" class="form-control" min="1" value="<?= $editCommande['quantite'] ?? '' ?>" required>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary"><?= $editCommande ? 'Modifier' : 'Ajouter' ?></button>
+                <a href="listCommandes.php" class="btn btn-secondary">Annuler</a>
+            </div>
+        </form>
+    <?php else: ?>
+        <form method="POST" action="" class="mb-4">
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="number" name="searchId" class="form-control" placeholder="ID commande" value="<?= htmlspecialchars($searchId) ?>">
+                </div>
+                <div class="col">
+                    <select name="searchType" class="form-select">
+                        <option value="">Tous les types</option>
+                        <option value="Légume" <?= $searchType === 'Légume' ? 'selected' : '' ?>>Légume</option>
+                        <option value="Fruit" <?= $searchType === 'Fruit' ? 'selected' : '' ?>>Fruit</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
+                </div>
+            </div>
+        </form>
+
+        <a href="?action=add" class="btn btn-success mb-3">Ajouter une commande</a>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Prix</th>
+                <th>Date</th>
+                <th>Quantité</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php if (!empty($filteredCommandes)): ?>
+                <?php foreach ($filteredCommandes as $commande): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($commande['idCommande']) ?></td>
+                        <td><?= htmlspecialchars($commande['type']) ?></td>
+                        <td><?= htmlspecialchars($commande['prix']) ?> TND</td>
+                        <td><?= htmlspecialchars($commande['dateCommande']) ?></td>
+                        <td><?= htmlspecialchars($commande['quantite']) ?> kg</td>
+                        <td>
+                            <a href="?idCommande=<?= $commande['idCommande'] ?>" class="btn btn-warning btn-sm">Modifier</a>
+                            <form method="POST" action="" style="display:inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="idCommande" value="<?= $commande['idCommande'] ?>">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer cette commande ?');">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="6">Aucune commande trouvée.</td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
+
+    <!-- Core JS Files -->
+    <script src="assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="assets/js/plugin/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

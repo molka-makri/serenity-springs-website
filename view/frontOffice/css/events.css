@@ -1,0 +1,53 @@
+/* Custom Styles for the Events Section */
+.events_section {
+  background-color: #f9f9f9;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #333;
+}
+
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-text {
+  color: #555;
+  font-size: 16px;
+}
+
+.card-text strong {
+  color: #000;
+}
+
+.card-footer {
+  text-align: right;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}

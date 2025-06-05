@@ -1,0 +1,187 @@
+<?php
+session_start();
+
+// Initialisation des commandes si elles n'existent pas dans la session
+if (!isset($_SESSION['commandes'])) {
+    $_SESSION['commandes'] = [
+        ['idCommande' => 1, 'type' => 'Légume', 'prix' => 20, 'dateCommande' => '2024-11-01', 'quantite' => 10],
+        ['idCommande' => 2, 'type' => 'Fruit', 'prix' => 15, 'dateCommande' => '2024-11-02', 'quantite' => 5],
+    ];
+}
+
+// Variables pour la gestion des actions
+$editCommande = null;
+$addCommande = isset($_GET['action']) && $_GET['action'] === 'add';
+$searchId = isset($_POST['searchId']) ? trim($_POST['searchId']) : '';
+$searchType = isset($_POST['searchType']) ? trim($_POST['searchType']) : '';
+$errors = [];
+
+// Traitement des actions POST (ajout, modification, suppression)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    $type = trim($_POST['type']);
+    $prix = floatval($_POST['prix']);
+    $dateCommande = trim($_POST['dateCommande']);
+    $quantite = intval($_POST['quantite']);
+
+    // Contrôles de saisie
+    if (empty($type) || !in_array($type, ['Légume', 'Fruit'])) {
+        $errors[] = "Le type de commande doit être 'Fruit' ou 'Légume'.";
+    }
+    if ($prix <= 0) {
+        $errors[] = "Le prix doit être un nombre positif.";
+    }
+    if ($quantite <= 0) {
+        $errors[] = "La quantité doit être un entier positif.";
+    }
+    if (empty($dateCommande)) {
+        $errors[] = "La date de commande est obligatoire.";
+    }
+
+    // Si aucune erreur, traitement des actions
+    if (empty($errors)) {
+        if ($_POST['action'] === 'add') {
+            $newId = count($_SESSION['commandes']) + 1;
+            $_SESSION['commandes'][] = [
+                'idCommande' => $newId,
+                'type' => $type,
+                'prix' => $prix,
+                'dateCommande' => $dateCommande,
+                'quantite' => $quantite,
+            ];
+            header("Location: listCommandes.php");
+            exit;
+        } elseif ($_POST['action'] === 'update') {
+            foreach ($_SESSION['commandes'] as &$commande) {
+                if ($commande['idCommande'] == $_POST['idCommande']) {
+                    $commande['type'] = $type;
+                    $commande['prix'] = $prix;
+                    $commande['dateCommande'] = $dateCommande;
+                    $commande['quantite'] = $quantite;
+                    break;
+                }
+            }
+            header("Location: listCommandes.php");
+            exit;
+        }
+    }
+}
+
+// Si on accède à une commande pour modification
+if (isset($_GET['idCommande'])) {
+    foreach ($_SESSION['commandes'] as $commande) {
+        if ($commande['idCommande'] == $_GET['idCommande']) {
+            $editCommande = $commande;
+            break;
+        }
+    }
+}
+
+// Filtrer les commandes selon les critères de recherche
+$filteredCommandes = array_filter($_SESSION['commandes'], function ($commande) use ($searchId, $searchType) {
+    $matchesId = empty($searchId) || (int)$commande['idCommande'] == (int)$searchId;
+    $matchesType = empty($searchType) || strtolower($commande['type']) == strtolower($searchType);
+    return $matchesId && $matchesType;
+});
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des commandes</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center my-4">
+        <?= $editCommande ? 'Modifier la commande' : ($addCommande ? 'Ajouter une nouvelle commande' : 'Liste des commandes') ?>
+    </h1>
+
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($addCommande || $editCommande): ?>
+        <form method="POST" action="" class="form-command">
+            <input type="hidden" name="action" value="<?= $editCommande ? 'update' : 'add' ?>">
+            <?php if ($editCommande): ?>
+                <input type="hidden" name="idCommande" value="<?= htmlspecialchars($editCommande['idCommande']) ?>">
+            <?php endif; ?>
+
+            <label for="type">Type :</label>
+            <select id="type" name="type" required>
+                <option value="">Choisir un type</option>
+                <option value="Légume" <?= (isset($editCommande) && $editCommande['type'] === 'Légume') ? 'selected' : '' ?>>Légume</option>
+                <option value="Fruit" <?= (isset($editCommande) && $editCommande['type'] === 'Fruit') ? 'selected' : '' ?>>Fruit</option>
+            </select>
+
+            <label for="prix">Prix :</label>
+            <input type="number" id="prix" name="prix" min="0.01" step="0.01" value="<?= $editCommande['prix'] ?? '' ?>" required>
+
+            <label for="dateCommande">Date de commande :</label>
+            <input type="date" id="dateCommande" name="dateCommande" value="<?= $editCommande['dateCommande'] ?? '' ?>" required>
+
+            <label for="quantite">Quantité :</label>
+            <input type="number" id="quantite" name="quantite" min="1" value="<?= $editCommande['quantite'] ?? '' ?>" required>
+
+            <button type="submit" class="btn btn-primary"><?= $editCommande ? 'Modifier' : 'Ajouter' ?></button>
+            <a href="listCommandes.php" class="btn btn-secondary">Annuler</a>
+        </form>
+    <?php else: ?>
+        <form method="POST" action="" class="mb-4">
+            <input type="number" name="searchId" placeholder="ID commande" value="<?= htmlspecialchars($searchId) ?>">
+            <select name="searchType">
+                <option value="">Tous les types</option>
+                <option value="Légume" <?= $searchType === 'Légume' ? 'selected' : '' ?>>Légume</option>
+                <option value="Fruit" <?= $searchType === 'Fruit' ? 'selected' : '' ?>>Fruit</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+        </form>
+
+        <a href="?action=add" class="btn btn-success mb-3">Ajouter une commande</a>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Prix</th>
+                <th>Date</th>
+                <th>Quantité</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php if (!empty($filteredCommandes)): ?>
+                <?php foreach ($filteredCommandes as $commande): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($commande['idCommande']) ?></td>
+                        <td><?= htmlspecialchars($commande['type']) ?></td>
+                        <td><?= htmlspecialchars($commande['prix']) ?> TND</td>
+                        <td><?= htmlspecialchars($commande['dateCommande']) ?></td>
+                        <td><?= htmlspecialchars($commande['quantite']) ?> kg</td>
+                        <td>
+                            <a href="?idCommande=<?= $commande['idCommande'] ?>" class="btn btn-warning btn-sm">Modifier</a>
+                            <form method="POST" action="" style="display:inline;">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="idCommande" value="<?= $commande['idCommande'] ?>">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer cette commande ?');">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="6">Aucune commande trouvée.</td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
+</body>
+</html>
