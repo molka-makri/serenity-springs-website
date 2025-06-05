@@ -28,4 +28,9 @@ This platform bridges the gap between producers and consumers, offering features
  </div>
 </section>
 <h2 style="text-align: center; color: #2e7d32;">🛠 Technologies Used</h2>
+<h3 style="color: #00796b;">Frontend:</h3> HTML, CSS, JavaScript
+
+<h3 style="color: #00796b;">Backend:</h3> PHP, Hack
+
+<h3 style="color: #00796b;">Integrations:</h3> Weather API, Chatbot platform (custom)
 </div>
