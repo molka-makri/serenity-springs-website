@@ -38,17 +38,19 @@ Participate in educational events, share expertise, and help build a more sustai
 
 ## 🛠️ Installation & Configuration
 
-1. **Clone the repository:**  
-   ```bash
-   git clone https://github.com/molka-makri/serenity-springs-website.git
-2. **Setup Local Environment**
+### 1. Clone the Repository
 ```bash
+git clone https://github.com/molka-makri/serenity-springs-website.git
+cd serenity-springs-website
+
+2. Setup Local Environment
+
 Install XAMPP or another web server stack.
 
 Place the project in your server root directory (htdocs in XAMPP)
 
-3. **Configure Database**
-```bash
+3. Configure Database
+
 Create a MySQL database (e.g., serenitysprings)
 
 Import the provided SQL file in /database/
