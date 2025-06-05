@@ -39,22 +39,40 @@ Participate in educational events, share expertise, and help build a more sustai
 ## 🛠️ Installation & Configuration
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/molka-makri/serenity-springs-website.git
 cd serenity-springs-website
+```
 
-2. Setup Local Environment
+2. Move the Project to XAMPP's htdocs Directory
+Placez le dossier cloné dans le répertoire htdocs de votre installation XAMPP :
 
-Install XAMPP or another web server stack.
+Windows
+C:\xampp\htdocs\serenity-springs-website
 
-Place the project in your server root directory (htdocs in XAMPP)
+macOS/Linux
+/Applications/XAMPP/htdocs/serenity-springs-website
+ou
+/opt/lampp/htdocs/serenity-springs-website
+3. Start Apache and MySQL
+Lancez le XAMPP Control Panel et démarrez les services Apache et MySQL.
+4. Create and Import the Database
+Ouvrez votre navigateur et allez sur :
+http://localhost/phpmyadmin
 
-3. Configure Database
+Créez une nouvelle base de données nommée :
+serenity_springs
 
-Create a MySQL database (e.g., serenitysprings)
+Sélectionnez cette base de données, puis allez dans l’onglet Importer.
 
-Import the provided SQL file in /database/
+Choisissez le fichier suivant depuis le projet :
+database/serenity_springs.sql
 
-Update database connection credentials in config.php
-
-
+Cliquez sur Go pour importer les tables et les données.
+5. Configure the Database Connection
+Ouvrez le fichier de configuration (par exemple config.php) et assurez-vous que les paramètres suivants sont corrects
+6. Access the Website
+Une fois tout configuré, accédez à l'application via votre navigateur :
+```bash
+http://localhost/serenity-springs-website
